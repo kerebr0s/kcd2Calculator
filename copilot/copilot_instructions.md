@@ -1,75 +1,18 @@
 # KCD2 Calculator — Copilot Instructions
 
 ## Purpose
-This document serves as the authoritative reference for the KCD2Calculator web application.
+This document serves as the authoritative reference for the KCD2 Calculator web application. 
 
-## Important Note on Quantity
-The ingredient quantities listed for each potion refer to quantities needed for **one successful batch**. 
-The number of potions produced per batch (batch size/yield) can vary based on various factors and will be modeled in a future iteration. 
-For now, all calculations assume one potion per successful batch unless otherwise specified.
+## Related Documents
+For detailed information on potion recipes, ingredients, and their properties, refer to: potion_reference.md
 
 ---
-
-## Data Models
-
-### Ingredient
-```
-{
-  "id": string,              // Unique identifier (e.g., "ing_belladonna")
-  "name": string,            // Display name (e.g., "Belladonna")
-}
-```
-
-### Liquid Base
-```
-{
-  "id": string,              // Unique identifier (e.g., "base_spirits")
-  "name": string             // Display name (e.g., "Spirits", "Water", "Wine", "Oil")
-}
-```
-
-### Potion Strength Outcome
-```
-{
-  "strength": string,        // One of: "Weak", "Normal", "Strong", "Henry"
-  "effect": string,          // Description of the effect at this strength level
-  "notes": string (optional) // Additional notes (e.g., side effects)
-}
-```
-
-### Potion
-```
-{
-  "id": string,              // Unique identifier (e.g., "potion_aesop")
-  "name": string,            // Display name (e.g., "Aesop")
-  "description": string,     // Optional flavor text or brief description
-  "type": string,            // Category: "Potion", "Perfume", "Poison", "Gunpowder", "Other"
-  "liquid_base": string,     // ID of the liquid base
-  "ingredients": [           // List of required ingredients per batch
-    {
-      "ingredient_id": string,
-      "quantity": number     // Quantity required (e.g., 1, 2, 3)
-    }
-  ],
-  "recipe_steps": [string],  // Ordered list of recipe steps
-  "outcomes": [              // Possible outcomes based on strength
-    {
-      "strength": string,    // "Weak", "Normal", "Strong", "Henry"
-      "effect": string
-    }
-  ]
-}
-```
-
----
-
-
 
 ## Business Rules and Calculation Logic
 
 ### Calculate Potions from Available Ingredients
 
-**Purpose:** Given a set of available ingredients with quantities, determine how many of each potion can be successfully crafted. Use potion_reference.md for complete reference of ingredients, liquid bases, and potion recipes.
+**Purpose:** Given a set of available ingredients with quantities, determine how many of each potion can be successfully crafted.
 
 **Algorithm:**
 1. For each potion recipe:
@@ -99,40 +42,34 @@ For now, all calculations assume one potion per successful batch unless otherwis
 
 **Example:**
 - Request: `{potion_lion: 3, potion_mintha: 2}`
-- Potion `lion` needs: Sage 2, Mint 2
-- Potion `mintha` needs: Dandelion 3, Marigold 1, Mint 1
+- Potion `lion` needs: Sage 2, Mint 2 per batch
+- Potion `mintha` needs: Dandelion 3, Marigold 1, Mint 1 per batch
+- variables:
+  - expected_batch_size = 1 (default assumption for now)
 - Calculations:
-  - Sage: `2 × 3 = 6`
-  - Mint: `(2 × 3) + (1 × 2) = 8`
-  - Dandelion: `3 × 2 = 6`
-  - Marigold: `1 × 2 = 2`
+  - Sage: `2 × (3 / expected_batch_size)) = 6`
+  - Mint: `(2 × (3 / expected_batch_size)) + (1 × (2 / expected_batch_size)) = 8`
+  - Dandelion: `3 × (2 / expected_batch_size) = 6`
+  - Marigold: `1 × (2 / expected_batch_size) = 2`
 - Result: `{ing_sage: 6, ing_mint: 8, ing_dandelion: 6, ing_marigold: 2}`
 
 ---
 
 ## Validation and Edge Cases
 
-### Unit Consistency
-- All ingredients use a common unit: **piece** (discrete count).
-- No unit conversion required for initial implementation.
-- Future iterations may introduce volume/weight units (ml, g, etc.).
-
 ### Quantity Rules
-- Quantities must be non-negative numbers.
-- Fractional quantities are allowed for **requirements** (e.g., recipes can theoretically require 0.5 of an ingredient).
+- Quantities must be non-negative integers.
 - Integer division (floor) is used when calculating craftable counts.
-- Fractional available quantities result in floor division (e.g., 5.7 available with 2 required = 2 craftable).
 
 ### Missing or Unavailable Ingredients
 - If an ingredient is missing from the available inventory, treat its quantity as 0.
-- A potion is **uncraftable** (craftable_count = 0) if any required ingredient is unavailable.
+- A potion is **uncraftable** (craftable_batch_count = 0) if any required ingredient is unavailable.
 - Return clear error/warning messages indicating which ingredients are missing.
 
 ### Over-Requesting
 - If requested potion quantities exceed what can be satisfied:
-  - Still calculate and return full requirement totals.
-  - It is the **consumer's responsibility** to validate sufficiency or raise alerts.
-  - Do not silently cap or modify requests.
+  - Calculate and return full requirement totals.
+  - Display difference of required vs. available ingredients to indicate shortfalls.
 
 ### Zero Quantities
 - If a potion recipe requires 0 of an ingredient (edge case), skip that ingredient.
@@ -206,7 +143,7 @@ def validate_inventory(
    - Add comprehensive unit tests for edge cases.
 
 3. **Web API:**
-   - Expose calculations via REST endpoints or GraphQL.
+   - Expose calculations via REST endpoints.
    - Example endpoints:
      - `POST /api/calculate/potions` — accepts available ingredients, returns craftable potions.
      - `POST /api/calculate/ingredients` — accepts requested potions, returns required ingredients.
