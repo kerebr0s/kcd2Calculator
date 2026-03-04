@@ -27,6 +27,22 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="app.py" />
+    <Compile Include="calculator.py" />
+    <Compile Include="data.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="static\" />
+    <Folder Include="templates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="IMPLEMENTATION_SUMMARY.md" />
+    <Content Include="QUICK_START.md" />
+    <Content Include="README.md" />
+    <Content Include="requirements.txt" />
+    <Content Include="static\app.js" />
+    <Content Include="static\style.css" />
+    <Content Include="templates\index.html" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
