@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KCD2 Potion Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>KCD2 Potion Calculator</h1>
+            <p>Calculate potion yields from ingredients or ingredient needs for desired potions</p>
+        </header>
+
+        <main>
+            <div class="calculator-grid">
+                <!-- Ingredients Column -->
+                <div class="column ingredients-column">
+                    <h2>Available Ingredients</h2>
+                    <div class="inputs-container" id="ingredientsContainer">
+                        {% for ing_id, ing_data in ingredients.items() | sort(attribute='1.name') %}
+                        <div class="input-group">
+                            <label for="ing_{{ ing_id }}">{{ ing_data.name }}</label>
+                            <input 
+                                type="number" 
+                                id="ing_{{ ing_id }}" 
+                                class="ingredient-input" 
+                                data-id="{{ ing_id }}"
+                                min="0" 
+                                max="9999" 
+                                value="0"
+                                placeholder="0"
+                            >
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button class="btn btn-primary" id="calculatePotionsBtn">
+                        Calculate Potions from Ingredients
+                    </button>
+                </div>
+
+                <!-- Potions Column -->
+                <div class="column potions-column">
+                    <h2>Potions</h2>
+                    <div class="inputs-container" id="potionsContainer">
+                        {% for potion_id, potion_data in potions.items() | sort(attribute='1.name') %}
+                        <div class="input-group">
+                            <label for="pot_{{ potion_id }}">{{ potion_data.name }}</label>
+                            <input 
+                                type="number" 
+                                id="pot_{{ potion_id }}" 
+                                class="potion-input" 
+                                data-id="{{ potion_id }}"
+                                min="0" 
+                                max="9999" 
+                                value="0"
+                                placeholder="0"
+                            >
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button class="btn btn-primary" id="calculateIngredientsBtn">
+                        Calculate Ingredients for Desired Potions
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <div id="resultsContainer"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
