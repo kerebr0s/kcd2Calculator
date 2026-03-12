@@ -11,7 +11,7 @@
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <LaunchProvider>Web launcher</LaunchProvider>
-    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <WebBrowserUrl>http://localhost:5000</WebBrowserUrl>
     <OutputPath>.</OutputPath>
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>kcd2Calculator</Name>
@@ -35,7 +35,6 @@
     <Folder Include="templates\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="IMPLEMENTATION_SUMMARY.md" />
     <Content Include="QUICK_START.md" />
     <Content Include="README.md" />
     <Content Include="requirements.txt" />

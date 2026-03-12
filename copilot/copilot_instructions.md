@@ -8,6 +8,126 @@ For detailed information on potion recipes, ingredients, and their properties, r
 
 ---
 
+## User Interface Features
+
+### Clear Buttons
+**Purpose:** Allow users to quickly reset all values in a column without manual deletion.
+
+**Behavior:**
+1. A "Clear All" button appears below each column (Ingredients and Potions).
+2. On click:
+   - Display a **confirmation dialog** stating: "This action will reset all values in the [Column Name] column to 0. This cannot be undone. Continue?"
+   - Two options: **Cancel** or **Confirm**
+3. If **Confirm** is clicked:
+   - Set all input values in the column to 0
+   - Clear any results in the results panel (optional)
+   - Trigger auto-save (debounced, 1 second)
+4. If **Cancel** is clicked:
+   - Close the dialog and take no action
+
+**Attributes:**
+- Button text: "Clear All [Column Name]"
+- Button color: Warning/caution theme (orange/yellow)
+- Confirmation dialog: Modal, centers on screen, prevents interaction with page until dismissed
+- Keyboard support: ESC key to cancel dialog
+- Location: Below each column's calculation button
+
+### Auto-Save (Client-Side Only)
+**Purpose:** Automatically save user's ingredient and potion values to the browser's local storage without requiring manual action or server interaction.
+
+**Storage Method:**
+- Browser's `localStorage` API (client-side only)
+- No server-side file needed
+- Data persists on the user's device across browser sessions
+- Data survives page refresh and browser restart
+
+**Data Storage Key:**
+- Key: `kcd2_calculator_state`
+- Format: JSON string
+
+**File Format:**
+```json
+{
+  "timestamp": "2024-03-04T15:30:00.000Z",
+  "ingredients": {
+    "ing_sage": 10,
+    "ing_mint": 5,
+    "ing_belladonna": 0
+  },
+  "potions": {
+    "potion_lion": 2,
+    "potion_aesop": 0
+  }
+}
+```
+
+**Auto-Save Behavior:**
+1. **On Input Change:**
+   - Any change to an ingredient or potion input field triggers auto-save
+   - Debounced: Save occurs after 1 second of no input changes
+   - Silent operation: No visible UI feedback (no buttons, no messages)
+   - Client-side only: No network calls, no API requests
+
+2. **On Calculate Button Click:**
+   - Trigger save when user clicks "Calculate" buttons
+   - Ensures latest values are saved after calculations
+   - Still debounced to prevent multiple rapid saves
+
+3. **Save Timing:**
+   - User enters value → 1 second timer starts
+   - If user continues typing/changing values → Timer resets
+   - When user stops for 1 second → Auto-save executes
+   - Process repeats for any subsequent input changes
+
+4. **No User Interaction Required:**
+   - No save button to click
+   - No manual save action needed
+   - Completely transparent to user
+   - Data automatically persists in browser
+
+**Load Behavior:**
+1. **On Page Load:**
+   - Check if `kcd2_calculator_state` exists in localStorage
+   - If exists and valid JSON:
+     - Parse the state object
+     - Populate ingredient inputs with saved values
+     - Populate potion inputs with saved values
+   - If doesn't exist:
+     - Display nothing; use default values (all 0)
+   - If corrupted/invalid:
+     - Silently ignore; use default values (all 0)
+
+2. **Timing:**
+   - Load happens immediately when page initializes
+   - Before any user interaction
+   - Usually < 50ms
+
+**Data Durability:**
+- ✅ Survives page refresh
+- ✅ Survives browser restart
+- ✅ Survives tab close and reopen
+- ✅ Persists across multiple sessions
+- ⚠️ Cleared if browser cache is cleared
+- ⚠️ Per-device and per-browser (not synced across devices)
+- ⚠️ Limited by browser storage quota (~5-10MB for most browsers)
+
+**No Clear/Delete:**
+- User cannot manually clear saved state
+- User cannot delete saved progress
+- If user wants fresh start, they must:
+  1. Manually clear all values (set to 0)
+  2. Or clear browser cache manually
+  3. Or use incognito/private browsing mode
+
+**Data Privacy:**
+- Data stored locally on user's device only
+- Never sent to server
+- Never stored server-side
+- User has full control over their data
+- Cleared when user clears browser cache/cookies
+
+---
+
 ## Business Rules and Calculation Logic
 
 ### Calculate Potions from Available Ingredients
@@ -86,11 +206,11 @@ def calculate_potions_from_ingredients(
 ) -> Dict[str, Dict[str, Any]]:
     """
     Calculate how many of each potion can be crafted from available ingredients.
-    
+
     Args:
         available: Dict of {ingredient_id: quantity_available}
         recipes: Dict of {potion_id: Potion object}
-    
+
     Returns:
         Dict of {potion_id: {craftable_count: int, limiting_ingredient: str}}
     """
@@ -102,11 +222,11 @@ def calculate_ingredients_for_potions(
 ) -> Dict[str, float]:
     """
     Calculate total ingredients needed to craft requested potions.
-    
+
     Args:
         requested: Dict of {potion_id: count_requested}
         recipes: Dict of {potion_id: Potion object}
-    
+
     Returns:
         Dict of {ingredient_id: total_quantity_needed}
     """
@@ -118,13 +238,39 @@ def validate_inventory(
 ) -> List[str]:
     """
     Validate that all available quantities are non-negative and ingredient IDs exist.
-    
+
     Args:
         available: Dict of {ingredient_id: quantity}
         all_ingredients: Reference dict of all valid ingredients
-    
+
     Returns:
         List of error messages (empty if valid)
+    """
+    pass
+
+def save_calculator_state(ingredients: Dict[str, int], potions: Dict[str, int]) -> bool:
+    """
+    Save current calculator state to browser's localStorage (client-side).
+
+    Implementation: Call on input change with debouncing (1 second).
+
+    Args:
+        ingredients: Dict of {ingredient_id: quantity}
+        potions: Dict of {potion_id: quantity}
+
+    Returns:
+        True if save successful, False otherwise
+    """
+    pass
+
+def load_calculator_state() -> Dict[str, Any]:
+    """
+    Load calculator state from browser's localStorage (client-side).
+
+    Implementation: Call on page load.
+
+    Returns:
+        Dict with keys 'ingredients' and 'potions', or empty dict if not found
     """
     pass
 ```

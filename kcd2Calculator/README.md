@@ -97,9 +97,9 @@ All ingredient quantities refer to one successful batch. The batch-size multipli
 
 ## Future Enhancements
 
-- Batch-size multiplier per potion
-- Unit conversion (weight/volume)
+- Batch-size multiplier per potion based on perks
 - Persistent storage (database)
-- Shopping list generation
+- Shopping/Gathering list generation
 - Advanced filtering and sorting options
+- Display recipe details when clicking on potion
 - Dark mode UI option

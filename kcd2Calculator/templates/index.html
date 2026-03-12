@@ -35,9 +35,14 @@
                         </div>
                         {% endfor %}
                     </div>
-                    <button class="btn btn-primary" id="calculatePotionsBtn">
-                        Calculate Potions from Ingredients
-                    </button>
+                    <div class="column-buttons">
+                        <button class="btn btn-primary" id="calculatePotionsBtn">
+                            Calculate Potions from Ingredients
+                        </button>
+                        <button class="btn btn-warning" id="clearIngredientsBtn">
+                            Clear All Ingredients
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Potions Column -->
@@ -60,9 +65,14 @@
                         </div>
                         {% endfor %}
                     </div>
-                    <button class="btn btn-primary" id="calculateIngredientsBtn">
-                        Calculate Ingredients for Desired Potions
-                    </button>
+                    <div class="column-buttons">
+                        <button class="btn btn-primary" id="calculateIngredientsBtn">
+                            Calculate Ingredients for Desired Potions
+                        </button>
+                        <button class="btn btn-warning" id="clearPotionsBtn">
+                            Clear All Potions
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -71,6 +81,20 @@
                 <div id="resultsContainer"></div>
             </div>
         </main>
+    </div>
+
+    <!-- Confirmation Dialog -->
+    <div id="confirmationDialog" class="dialog-overlay hidden">
+        <div class="dialog-box">
+            <div class="dialog-title">Confirmation</div>
+            <div class="dialog-content" id="dialogContent">
+                Are you sure?
+            </div>
+            <div class="dialog-buttons">
+                <button class="btn btn-secondary" id="dialogCancel">Cancel</button>
+                <button class="btn btn-primary" id="dialogConfirm">Confirm</button>
+            </div>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>

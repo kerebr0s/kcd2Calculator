@@ -57,7 +57,7 @@ def api_calculate_potions():
 def api_calculate_ingredients():
     """
     API endpoint to calculate required ingredients for requested potions.
-    
+
     Expected JSON:
     {
         "requested": {"potion_id": quantity, ...},
@@ -68,17 +68,17 @@ def api_calculate_ingredients():
         data = request.get_json()
         requested = data.get('requested', {})
         available = data.get('available', {})
-        
+
         # Convert string keys to integers
         requested = {k: int(v) for k, v in requested.items() if v}
         available = {k: int(v) for k, v in available.items() if v}
-        
+
         # Calculate required ingredients
         required = calculate_ingredients_for_potions(requested, POTIONS)
-        
+
         # Calculate shortfalls
         shortfalls = calculate_ingredient_shortfalls(required, available, INGREDIENTS)
-        
+
         # Format result for frontend
         result = {}
         for ingredient_id, info in shortfalls.items():
@@ -89,7 +89,7 @@ def api_calculate_ingredients():
                 'available': info['available'],
                 'shortfall': info['shortfall']
             }
-        
+
         return jsonify({
             'success': True,
             'requirements': result
