@@ -10,6 +10,13 @@ For detailed information on potion recipes, ingredients, and their properties, r
 
 ## User Interface Features
 
+### Number inputs
+**Purpose:** Allow users to enter quantities for ingredients and potions.
+
+**Behavior:**
+1. Each ingredient and potion has an associated number input field.
+2. Input field accepts only non-negative integers (0-9999).
+
 ### Clear Buttons
 **Purpose:** Allow users to quickly reset all values in a column without manual deletion.
 
@@ -275,46 +282,4 @@ def load_calculator_state() -> Dict[str, Any]:
     pass
 ```
 
----
-
-## Implementation Next Steps
-
-1. **Data Storage:**
-   - Serialize all potion and ingredient data to JSON or a lightweight database.
-   - Example JSON structure (see `/data/potions.json` and `/data/ingredients.json`).
-
-2. **Core Calculation Functions:**
-   - Implement `calculate_potions_from_ingredients()`.
-   - Implement `calculate_ingredients_for_potions()`.
-   - Add comprehensive unit tests for edge cases.
-
-3. **Web API:**
-   - Expose calculations via REST endpoints.
-   - Example endpoints:
-     - `POST /api/calculate/potions` — accepts available ingredients, returns craftable potions.
-     - `POST /api/calculate/ingredients` — accepts requested potions, returns required ingredients.
-
-4. **Frontend:**
-   - Build UI forms for:
-     - Ingredient inventory input.
-     - Potion request input.
-     - Display results (craftable potions, required ingredients, shortfalls).
-
-5. **Future Enhancements:**
-   - Add batch-size multiplier logic per potion strength/outcome.
-   - Introduce unit conversion (g ↔ ml, etc.).
-   - Add storage persistence (database).
-   - Add procurement/shopping list generation.
-
----
-
-## Summary
-
-This reference document provides:
-- **Complete ingredient and potion lists** with precise recipes, steps, and outcomes.
-- **Data model definitions** for integration with code.
-- **Calculation algorithms** for both primary use cases.
-- **Edge case handling** and validation rules.
-- **API surface** suggestions for implementation.
-
-Use this document as the source of truth for all potion-crafting logic and data structures throughout the application.
+--

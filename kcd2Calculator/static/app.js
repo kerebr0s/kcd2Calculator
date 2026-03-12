@@ -17,8 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Setup auto-save on input changes
     document.querySelectorAll('.ingredient-input, .potion-input').forEach(input => {
-        input.addEventListener('change', () => debounceAutoSave());
-        input.addEventListener('input', () => debounceAutoSave());
+        input.addEventListener('change', () => validateAndDebounceAutoSave(input));
+        input.addEventListener('input', () => validateAndDebounceAutoSave(input));
+        input.addEventListener('blur', () => enforceInputConstraints(input));
     });
 
     // Setup confirmation dialog buttons
@@ -35,6 +36,51 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load state on page load
     loadCalculatorState();
 });
+
+/**
+ * Validate input value and enforce constraints (0-9999, integers only)
+ */
+function enforceInputConstraints(input) {
+    let value = input.value;
+
+    // Handle empty input
+    if (value === '' || value === null) {
+        input.value = 0;
+        return;
+    }
+
+    // Parse as integer
+    let intValue = parseInt(value, 10);
+
+    // Check if parsing resulted in NaN
+    if (isNaN(intValue)) {
+        input.value = 0;
+        return;
+    }
+
+    // Enforce minimum (0)
+    if (intValue < 0) {
+        input.value = 0;
+        return;
+    }
+
+    // Enforce maximum (9999)
+    if (intValue > 9999) {
+        input.value = 9999;
+        return;
+    }
+
+    // Ensure value is set correctly
+    input.value = intValue;
+}
+
+/**
+ * Validate input and trigger debounced auto-save
+ */
+function validateAndDebounceAutoSave(input) {
+    enforceInputConstraints(input);
+    debounceAutoSave();
+}
 
 /**
  * Debounce auto-save: wait 1 second after last input before saving
