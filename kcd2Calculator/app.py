@@ -102,4 +102,14 @@ def api_calculate_ingredients():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    import os
+
+    # Get host and port from environment or use defaults
+    host = os.getenv('FLASK_RUN_HOST', '127.0.0.1')
+    port = int(os.getenv('FLASK_RUN_PORT', 5000))
+
+    # In production/docker, use 0.0.0.0 to listen on all interfaces
+    if os.getenv('FLASK_ENV') == 'production':
+        host = '0.0.0.0'
+
+    app.run(host=host, port=port, debug=True, use_reloader=False)

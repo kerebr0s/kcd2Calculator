@@ -35,6 +35,9 @@
     <Folder Include="templates\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DEPLOYMENT.md" />
+    <Content Include="docker-entrypoint.sh" />
+    <Content Include="DOCKER.md" />
     <Content Include="QUICK_START.md" />
     <Content Include="README.md" />
     <Content Include="requirements.txt" />
